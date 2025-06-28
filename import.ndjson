@@ -1,0 +1,4 @@
+{"_id":"category-technology","_type":"category","title":"Technology","slug":{"_type":"slug","current":"technology"},"description":"Posts related to tech"}
+{"_id":"category-selfgrowth","_type":"category","title":"Self Growth","slug":{"_type":"slug","current":"self-growth"},"description":"Personal improvement guides"}
+{"_id":"product-iphone","_type":"product","title":"iPhone 15 Pro Review","slug":{"_type":"slug","current":"iphone-15-pro-review"},"description":"Detailed review of the iPhone 15 Pro","price":1299,"category":{"_type":"reference","_ref":"category-technology"}}
+{"_id":"product-habits","_type":"product","title":"Atomic Habits Summary","slug":{"_type":"slug","current":"atomic-habits-summary"},"description":"Breakdown of Atomic Habits book","price":0,"category":{"_type":"reference","_ref":"category-selfgrowth"}}
