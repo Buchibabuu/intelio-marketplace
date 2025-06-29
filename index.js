@@ -1,36 +1,47 @@
-import sanity from '../sanity'
+// pages/index.js
+import React from 'react'
+import Head from 'next/head'
+import { createClient } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
-import { useEffect, useState } from 'react'
 
-const builder = imageUrlBuilder(sanity)
+const client = createClient({
+  projectId: '9jh6762v',
+  dataset: 'production',
+  useCdn: true,
+  apiVersion: '2023-01-01',
+})
+
+const builder = imageUrlBuilder(client)
 function urlFor(source) {
   return builder.image(source)
 }
 
-export default function Home() {
-  const [products, setProducts] = useState([])
+export async function getServerSideProps() {
+  const products = await client.fetch(`*[_type == "product"]{title, description, price, image}`)
+  return { props: { products } }
+}
 
-  useEffect(() => {
-    sanity.fetch(`*[_type == "product"]{_id, title, price, description, image}`).then((data) => {
-      setProducts(data)
-    })
-  }, [])
-
+export default function Home({ products }) {
   return (
-    <div style={{ padding: '2rem', background: '#0a0a0a', color: '#fff' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>🛍️ Intelio Marketplace Products</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-        {products.map((product) => (
-          <div key={product._id} style={{ background: '#1b1b1b', padding: '20px', borderRadius: '12px' }}>
-            {product.image && (
-              <img src={urlFor(product.image).width(300).url()} alt={product.title} style={{ borderRadius: '8px', width: '100%' }} />
-            )}
-            <h2 style={{ marginTop: '10px', color: '#00f0ff' }}>{product.title}</h2>
-            <p>{product.description}</p>
-            <p><strong>${product.price}</strong></p>
-          </div>
-        ))}
+    <>
+      <Head>
+        <title>Intelio Marketplace</title>
+      </Head>
+      <div style={{ padding: '20px', color: '#fff', background: '#0a0a0a' }}>
+        <h1 style={{ color: '#00f0ff' }}>🔥 Intelio Marketplace</h1>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+          {products.map((product, i) => (
+            <div key={i} style={{ background: '#1b1b1b', borderRadius: '12px', padding: '20px' }}>
+              <h2 style={{ color: '#00f0ff' }}>{product.title}</h2>
+              <p>{product.description}</p>
+              <p>💰 ₹{product.price}</p>
+              {product.image && (
+                <img src={urlFor(product.image).width(300).url()} alt={product.title} style={{ borderRadius: '8px' }} />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
